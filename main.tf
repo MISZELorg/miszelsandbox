@@ -22,7 +22,28 @@ provider "azurerm" {
   use_oidc = true
 }
 
-# resource "azurerm_resource_group" "rg-aks" {
-#   name     = var.resource_group_name
-#   location = var.location
-# }
+###
+
+resource "azurerm_resource_group" "rg1" {
+  name     = "rg1"
+  location = "northeurope"
+}
+
+resource "azurerm_resource_group" "rg2" {
+  name     = "rg2"
+  location = "westeurope"
+}
+
+resource "azurerm_resource_group" "rg3" {
+  name     = "rg3"
+  location = "polandcentral"
+}
+
+###
+
+resource "azurerm_resource_group" "rg-res" {
+  for_each = var.rg_map
+  name     = each.value.name
+  location = each.value.location
+}
+
