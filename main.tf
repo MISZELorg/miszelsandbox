@@ -70,63 +70,66 @@ resource "azurerm_subnet" "subnet-test" {
   ]
 }
 
-resource "azurerm_public_ip" "pip-test" {
-  allocation_method   = "Static"
-  location            = azurerm_resource_group.rg-test.location
-  name                = "vmtest-ip"
-  resource_group_name = azurerm_resource_group.rg-test.name
-  sku                 = "Standard"
-}
-
-resource "azurerm_network_security_group" "nsg-test" {
-  location            = azurerm_resource_group.rg-test.location
-  name                = "vmtest-nsg"
-  resource_group_name = azurerm_resource_group.rg-test.name
-}
-
-# resource "azurerm_network_interface" "vmnic-test" {
+# resource "azurerm_public_ip" "pip-test" {
+#   allocation_method   = "Static"
 #   location            = azurerm_resource_group.rg-test.location
-#   name                = "vmtestnic1"
+#   name                = "vmtest-ip"
 #   resource_group_name = azurerm_resource_group.rg-test.name
-#   ip_configuration {
-#     name                          = "ipconfig1"
-#     private_ip_address_allocation = "Dynamic"
-#     public_ip_address_id          = azurerm_public_ip.pip-test.id
-#     subnet_id                     = azurerm_subnet.subnet-test.id
-#   }
-#   depends_on = [
-#     azurerm_public_ip.pip-test,
-#     azurerm_subnet.subnet-test,
-#   ]
+#   sku                 = "Standard"
 # }
 
-# resource "azurerm_linux_virtual_machine" "vm-test" {
-#   admin_password                  = "!@Pa55w0rd123"
-#   admin_username                  = "kmiszel"
-#   disable_password_authentication = false
-#   location                        = azurerm_resource_group.rg-test.location
-#   name                            = "vmtest"
-#   network_interface_ids           = [azurerm_network_interface.vmnic-test.id]
-#   resource_group_name             = azurerm_resource_group.rg-test.name
-#   secure_boot_enabled             = true
-#   size                            = "Standard_B1ms"
-#   vtpm_enabled                    = true
-#   additional_capabilities {
-#   }
-#   os_disk {
-#     caching              = "ReadWrite"
-#     storage_account_type = "Standard_LRS"
-#   }
-#   source_image_reference {
-#     offer     = "0001-com-ubuntu-server-focal"
-#     publisher = "canonical"
-#     sku       = "20_04-lts-gen2"
-#     version   = "latest"
-#   }
-#   depends_on = [
-#     azurerm_network_interface.vmnic-test,
-#   ]
+# resource "azurerm_network_security_group" "nsg-test" {
+#   location            = azurerm_resource_group.rg-test.location
+#   name                = "vmtest-nsg"
+#   resource_group_name = azurerm_resource_group.rg-test.name
 # }
+
+resource "azurerm_network_interface" "vmnic-test" {
+  for_each = var.vm_map
+
+  location            = azurerm_resource_group.rg-test.location
+  name                = "${each.value.name}-nic"
+  resource_group_name = azurerm_resource_group.rg-test.name
+  ip_configuration {
+    name                          = "ipconfig1"
+    private_ip_address_allocation = "Dynamic"
+    subnet_id                     = azurerm_subnet.subnet-test.id
+  }
+  depends_on = [
+    azurerm_public_ip.pip-test,
+    azurerm_subnet.subnet-test,
+  ]
+}
+
+resource "azurerm_linux_virtual_machine" "vm-test" {
+  for_each = var.vm_map
+
+  admin_password                  = each.value.admin_password
+  admin_username                  = each.value.admin_username
+  disable_password_authentication = false
+  location                        = azurerm_resource_group.rg-test.location
+  name                            = each.value.name
+  network_interface_ids           = [azurerm_network_interface.vmnic-test[each.key].id]
+  resource_group_name             = azurerm_resource_group.rg-test.name
+  secure_boot_enabled             = true
+  size                            = each.value.size
+  vtpm_enabled                    = true
+  additional_capabilities {
+  }
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+  source_image_reference {
+    offer     = "0001-com-ubuntu-server-focal"
+    publisher = "canonical"
+    sku       = "20_04-lts-gen2"
+    version   = "latest"
+  }
+  depends_on = [
+    azurerm_network_interface.vmnic-test,
+  ]
+}
 
 
 # resource "azurerm_network_interface_security_group_association" "res-3" {
