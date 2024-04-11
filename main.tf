@@ -51,7 +51,7 @@ resource "azurerm_resource_group" "rg-res" {
 
 resource "azurerm_resource_group" "rg-test" {
   location = "northeurope"
-  name     = "rgtest"
+  name     = "rgtest2"
 }
 
 resource "azurerm_virtual_network" "vnet-test" {
