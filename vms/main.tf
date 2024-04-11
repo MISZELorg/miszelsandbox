@@ -2,14 +2,14 @@ resource "azurerm_network_interface" "vmnic-test" {
   for_each            = var.vm_map
   location            = var.location
   name                = "${each.value.name}-nic"
-  resource_group_name = module.resource_group_rg1.resource_group_name
+  resource_group_name = var.resource_group_name
   ip_configuration {
     name                          = "ipconfig1"
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = module.azurerm_virtual_network.vnet.id
+    subnet_id                     = module.vnet.azurerm_virtual_network.vnet.id
   }
   depends_on = [
-    module.vnet_module.azurerm_subnet.subnet,
+    module.vnet.azurerm_subnet.subnet,
   ]
 }
 resource "azurerm_linux_virtual_machine" "vm-test" {
