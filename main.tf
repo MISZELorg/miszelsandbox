@@ -16,6 +16,7 @@ module "vnet_module" {
 }
 
 module "vms" {
-  source   = "./vms"
-  location = var.location
+  source              = "./vms"
+  resource_group_name = module.resource_group_rg1.resource_group_name
+  location            = var.location
 }
