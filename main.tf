@@ -24,20 +24,20 @@ provider "azurerm" {
 
 ###
 
-resource "azurerm_resource_group" "rg1" {
-  name     = "rg1"
-  location = "northeurope"
-}
+# resource "azurerm_resource_group" "rg1" {
+#   name     = "rg1"
+#   location = "westeurope"
+# }
 
-resource "azurerm_resource_group" "rg2" {
-  name     = "rg2"
-  location = "westeurope"
-}
+# resource "azurerm_resource_group" "rg2" {
+#   name     = "rg2"
+#   location = "northeurope"
+# }
 
-resource "azurerm_resource_group" "rg3" {
-  name     = "rg3"
-  location = "polandcentral"
-}
+# resource "azurerm_resource_group" "rg3" {
+#   name     = "rg3"
+#   location = "polandcentral"
+# }
 
 ###
 
