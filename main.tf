@@ -8,6 +8,7 @@ module "vnet_module" {
   source              = "./vnet"
   vnet_name           = "vnet1"
   subnet_name         = "default"
+  subnet_id           = module.vnet_module.azurerm_subnet.subnet.id
   address_space       = ["10.0.0.0/16"]
   subnet_prefixes     = ["10.0.0.0/24"]
   resource_group_name = module.resource_group_rg1.resource_group_name
