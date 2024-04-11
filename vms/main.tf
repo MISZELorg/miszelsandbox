@@ -6,7 +6,7 @@ resource "azurerm_network_interface" "vmnic-test" {
   ip_configuration {
     name                          = "ipconfig1"
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = module.vnet_module.azurerm_virtual_network.vnet.id
+    subnet_id                     = module.vnet_module.azurerm_subnet.subnet.id
   }
   depends_on = [
     module.vnet_module.azurerm_subnet.subnet,
