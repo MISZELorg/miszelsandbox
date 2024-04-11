@@ -96,7 +96,6 @@ resource "azurerm_network_interface" "vmnic-test" {
     subnet_id                     = azurerm_subnet.subnet-test.id
   }
   depends_on = [
-    azurerm_public_ip.pip-test,
     azurerm_subnet.subnet-test,
   ]
 }
