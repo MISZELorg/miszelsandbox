@@ -23,3 +23,7 @@ variable "vnet_name" {
 variable "subnet_name" {
   type = string
 }
+
+variable "vmname" {
+  type = string
+}
