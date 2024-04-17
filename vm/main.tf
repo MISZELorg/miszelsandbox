@@ -3,12 +3,12 @@ resource "azurerm_network_interface" "vmnic-test" {
   name                = "${var.vmname}-nic"
   resource_group_name = var.resource_group_name
   ip_configuration {
-    name                          = "${var.vmname[count.index]}-ipconfig"
+    name                          = "${var.vmname}-ipconfig"
     private_ip_address_allocation = "Dynamic"
     subnet_id                     = data.azurerm_subnet.existing_subnet.id
   }
   depends_on = [
-    module.vnet_module.azurerm_subnet.subnet,
+    data.azurerm_subnet.existing_subnet,
   ]
 }
 
