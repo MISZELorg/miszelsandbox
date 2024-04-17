@@ -19,7 +19,7 @@ module "resource_group_rg2" {
 
 module "storage_account_sa2" {
   source              = "./sa"
-  sa_name             = var.sa_name
+  sa_name             = var.sa_name2
   resource_group_name = var.resource_group_names["rg2"]
   location            = var.location
   depends_on          = [module.resource_group_rg2]
