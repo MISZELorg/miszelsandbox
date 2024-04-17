@@ -34,3 +34,10 @@ module "vnet_module" {
   resource_group_name = module.resource_group_rg1.resource_group_name
   location            = var.location
 }
+
+module "vm_module" {
+  source              = "./vm"
+  resource_group_name = module.resource_group_rg1.resource_group_name
+  location            = var.location
+  vmname              = var.vmname
+}
