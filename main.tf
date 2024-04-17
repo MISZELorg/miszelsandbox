@@ -40,4 +40,6 @@ module "vm_module" {
   resource_group_name = module.resource_group_rg1.resource_group_name
   location            = var.location
   vmname              = var.vmname
+  vnet_name           = var.vnet_name
+  subnet_name         = var.subnet_name
 }
