@@ -1,3 +1,8 @@
+resource "azurerm_resource_group" "rg1" {
+  name     = "rg1"
+  location = "westeurope"
+}
+
 resource "azurerm_storage_account" "example" {
   name                     = "kmiszelstrg187"
   resource_group_name      = azurerm_resource_group.rg1.name
