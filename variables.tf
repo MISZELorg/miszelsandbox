@@ -11,3 +11,7 @@ variable "location" {
 variable "sa_name" {
   type = string
 }
+
+variable "sa_name2" {
+  type = string
+}
