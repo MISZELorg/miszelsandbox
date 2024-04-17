@@ -15,3 +15,11 @@ variable "sa_name" {
 variable "sa_name2" {
   type = string
 }
+
+variable "vnet_name" {
+  type = string
+}
+
+variable "subnet_name" {
+  type = string
+}

@@ -24,3 +24,13 @@ module "storage_account_sa2" {
   location            = var.location
   depends_on          = [module.resource_group_rg2]
 }
+
+module "vnet_module" {
+  source              = "./vnet"
+  vnet_name           = var.vnet_name
+  subnet_name         = var.subnet_name
+  address_space       = ["10.0.0.0/16"]
+  subnet_prefixes     = ["10.0.0.0/24"]
+  resource_group_name = module.resource_group_rg1.resource_group_name
+  location            = var.location
+}
