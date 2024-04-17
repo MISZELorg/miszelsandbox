@@ -7,3 +7,7 @@ variable "location" {
   description = "AZ resource location"
   type        = string
 }
+
+variable "sa_name" {
+  type = string
+}
