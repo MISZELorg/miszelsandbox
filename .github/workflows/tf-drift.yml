@@ -20,7 +20,7 @@ env:
 jobs:
   terraform-plan:
     name: 'Terraform Plan'
-    runs-on: ubuntu-latest
+    runs-on: azure2
     env:
       #this is needed since we are running terraform with read-only permissions
       ARM_SKIP_PROVIDER_REGISTRATION: true
@@ -32,11 +32,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    # Install the latest version of the Terraform CLI
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_wrapper: false
+    # # Install the latest version of the Terraform CLI
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v3
+    #   with:
+    #     terraform_wrapper: false
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
