@@ -42,12 +42,20 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Azure Key Vault Secrets
-      id: azurekeyvault
-      uses: Azure/get-keyvault-secrets@v1
+    # - name: Azure Key Vault Secrets
+    #   id: azurekeyvault
+    #   uses: Azure/get-keyvault-secrets@v1
+    #   with:
+    #     keyvault: "kv-miszelgithub"
+    #     secrets: 'sandboxsub, spnreader'
+
+    - name: Azure CLI script
+      id: step_one
+      uses: azure/CLI@v1
       with:
-        keyvault: "kv-miszelgithub"
-        secrets: 'sandboxsub, spnreader'
+        inlineScript: |
+          echo sandboxsub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
+          echo spnreader=$(az keyvault secret show --vault-name kv-miszelgithub --name spnreader --query value --out tsv) >> $GITHUB_ENV
 
     # # Install the latest version of the Terraform CLI
     # - name: Setup Terraform
@@ -60,8 +68,8 @@ jobs:
       run: terraform init
       env:
         ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: ${{ steps.azurekeyvault.outputs.sandboxsub }}
-        ARM_CLIENT_ID: ${{ steps.azurekeyvault.outputs.spnreader }}
+        ARM_SUBSCRIPTION_ID: "${{ env.sandboxsub }}"
+        ARM_CLIENT_ID: "${{ env.spnreader }}"
 
     # Checks that all Terraform configuration files adhere to a canonical format
     # Will fail the build if not
@@ -74,8 +82,8 @@ jobs:
       id: tf-plan
       env:
         ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: ${{ steps.azurekeyvault.outputs.sandboxsub }}
-        ARM_CLIENT_ID: ${{ steps.azurekeyvault.outputs.spnreader }}
+        ARM_SUBSCRIPTION_ID: "${{ env.sandboxsub }}"
+        ARM_CLIENT_ID: "${{ env.spnreader }}"
       run: |
         export exitcode=0
         terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
