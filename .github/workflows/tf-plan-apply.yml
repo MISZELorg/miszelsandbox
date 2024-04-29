@@ -15,10 +15,10 @@ permissions:
   pull-requests: write
 
 #These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
-env:
-  ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
-  ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-  ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+# env:
+#   ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+#   ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+#   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
 
 jobs:
   terraform-plan:
@@ -35,6 +35,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Azure CLI Login
+      uses: Azure/login@v1.1
+      with:
+        creds: '{"clientId":"${{ secrets.AZ_CLIENT_ID }}","clientSecret":"${{ secrets.AZ_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZ_SUBID }}","tenantId":"${{ secrets.AZ_TENANT_ID }}"}'
+
+    - name: Azure Key Vault Secrets
+      id: azurekeyvault
+      uses: Azure/get-keyvault-secrets@v1
+      with:
+        keyvault: "kv-miszelgithub"
+        secrets: 'sandboxsub, spnreader'
+
     # # Install the latest version of the Terraform CLI
     # - name: Setup Terraform
     #   uses: hashicorp/setup-terraform@v3
@@ -44,6 +56,10 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform init
+      env:
+        ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: ${{ steps.azurekeyvault.outputs.sandboxsub }}
+        ARM_CLIENT_ID: ${{ steps.azurekeyvault.outputs.spnreader }}
 
     # Checks that all Terraform configuration files adhere to a canonical format
     # Will fail the build if not
@@ -54,6 +70,10 @@ jobs:
     # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
     - name: Terraform Plan
       id: tf-plan
+      env:
+        ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: ${{ steps.azurekeyvault.outputs.sandboxsub }}
+        ARM_CLIENT_ID: ${{ steps.azurekeyvault.outputs.spnreader }}
       run: |
         export exitcode=0
         terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
@@ -126,6 +146,18 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
+    
+    - name: Azure CLI Login
+      uses: Azure/login@v1.1
+      with:
+        creds: '{"clientId":"${{ secrets.AZ_CLIENT_ID }}","clientSecret":"${{ secrets.AZ_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZ_SUBID }}","tenantId":"${{ secrets.AZ_TENANT_ID }}"}'
+
+    - name: Azure Key Vault Secrets
+      id: azurekeyvault
+      uses: Azure/get-keyvault-secrets@v1
+      with:
+        keyvault: "kv-miszelgithub"
+        secrets: 'sandboxsub, spnadmin'
 
     # # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     # - name: Setup Terraform
@@ -144,3 +176,7 @@ jobs:
     # Terraform Apply
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
+      env:
+        ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: ${{ steps.azurekeyvault.outputs.sandboxsub }}
+        ARM_CLIENT_ID: ${{ steps.azurekeyvault.outputs.spnadmin }}
