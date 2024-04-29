@@ -191,7 +191,7 @@ jobs:
       env:
         ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: "${{ env.sandboxsub }}"
-        ARM_CLIENT_ID: "${{ env.spnreader }}"
+        ARM_CLIENT_ID: "${{ env.spnadmin }}"
 
     # Download saved plan from artifacts  
     - name: Download Terraform Plan
@@ -205,4 +205,4 @@ jobs:
       env:
         ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: "${{ env.sandboxsub }}"
-        ARM_CLIENT_ID: "${{ env.spnreader }}"
+        ARM_CLIENT_ID: "${{ env.spnadmin }}"
