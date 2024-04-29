@@ -15,7 +15,7 @@ permissions:
   pull-requests: write
 
 #These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
-# env:
+env:
 #   ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
 #   ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
 #   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
@@ -34,7 +34,8 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
-
+    
+    # Sign-in to Azure with Github secrets
     - name: Azure login
       uses: azure/login@v2
       with:
@@ -42,15 +43,8 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    # - name: Azure Key Vault Secrets
-    #   id: azurekeyvault
-    #   uses: Azure/get-keyvault-secrets@v1
-    #   with:
-    #     keyvault: "kv-miszelgithub"
-    #     secrets: 'sandboxsub, spnreader'
-
-    - name: Azure CLI script
-      id: step_one
+    # Access environemnt secrets stored in Keyvault
+    - name: Read secrets
       uses: azure/CLI@v2
       with:
         azcliversion: latest
@@ -58,7 +52,7 @@ jobs:
           echo sandboxsub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
           echo spnreader=$(az keyvault secret show --vault-name kv-miszelgithub --name spnreader --query value --out tsv) >> $GITHUB_ENV
 
-    # # Install the latest version of the Terraform CLI
+    # # Install the latest version of the Terraform CLI  ### this step is needed only with short lived runners ### this step is needed only with short lived runners
     # - name: Setup Terraform
     #   uses: hashicorp/setup-terraform@v3
     #   with:
@@ -158,6 +152,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     
+    # Sign-in to Azure with Github secrets
     - name: Azure Login
       uses: azure/login@v2
       with:
@@ -165,15 +160,8 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    # - name: Azure Key Vault Secrets
-    #   id: azurekeyvault
-    #   uses: Azure/get-keyvault-secrets@v1
-    #   with:
-    #     keyvault: "kv-miszelgithub"
-    #     secrets: 'sandboxsub, spnadmin'
-
-    - name: Azure CLI script
-      id: step_one
+    # Access environemnt secrets stored in Keyvault
+    - name: Read secrets
       uses: azure/CLI@v2
       with:
         azcliversion: latest
@@ -181,7 +169,7 @@ jobs:
           echo sandboxsub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
           echo spnadmin=$(az keyvault secret show --vault-name kv-miszelgithub --name spnadmin --query value --out tsv) >> $GITHUB_ENV
 
-    # # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    # # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token ### this step is needed only with short lived runners
     # - name: Setup Terraform
     #   uses: hashicorp/setup-terraform@v3
 
