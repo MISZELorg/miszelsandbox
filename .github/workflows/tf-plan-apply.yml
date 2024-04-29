@@ -27,15 +27,15 @@ jobs:
     env:
       #this is needed since we are running terraform with read-only permissions
       ARM_SKIP_PROVIDER_REGISTRATION: true
-    # outputs:
-    #   tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
+    outputs:
+      tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
 
     steps:
 
-    - name: Save state
-      run: echo "${{ steps.tf-plan.outputs.exitcode }}" >> $GITHUB_STATE
-    - name: Set output
-      run: echo "${{ steps.tf-plan.outputs.exitcode }}" >> $GITHUB_OUTPUT
+    # - name: Save state
+    #   run: echo "${{ steps.tf-plan.outputs.exitcode }}" >> $GITHUB_STATE
+    # - name: Set output
+    #   run: echo "${{ steps.tf-plan.outputs.exitcode }}" >> $GITHUB_OUTPUT
 
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
@@ -44,7 +44,9 @@ jobs:
     - name: Azure CLI Login
       uses: Azure/login@v2
       with:
-        creds: '{"clientId":"${{ secrets.AZ_CLIENT_ID }}","subscriptionId":"${{ secrets.AZ_SUBID }}","tenantId":"${{ secrets.AZ_TENANT_ID }}"}'
+        client-id: ${{ secrets.AZ_CLIENT_ID }}
+        subscription-id: ${{ secrets.AZ_SUBID }}
+        tenant-id : ${{ secrets.AZ_TENANT_ID }}"}'
 
     - name: Azure Key Vault Secrets
       id: azurekeyvault
@@ -156,7 +158,9 @@ jobs:
     - name: Azure CLI Login
       uses: Azure/login@v2
       with:
-        creds: '{"clientId":"${{ secrets.AZ_CLIENT_ID }}","subscriptionId":"${{ secrets.AZ_SUBID }}","tenantId":"${{ secrets.AZ_TENANT_ID }}"}'
+        client-id: ${{ secrets.AZ_CLIENT_ID }}
+        subscription-id: ${{ secrets.AZ_SUBID }}
+        tenant-id : ${{ secrets.AZ_TENANT_ID }}"}'
 
     - name: Azure Key Vault Secrets
       id: azurekeyvault
