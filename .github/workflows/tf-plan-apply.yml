@@ -27,10 +27,16 @@ jobs:
     env:
       #this is needed since we are running terraform with read-only permissions
       ARM_SKIP_PROVIDER_REGISTRATION: true
-    outputs:
-      tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
+    # outputs:
+    #   tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
 
     steps:
+
+    - name: Save state
+      run: echo "${{ steps.tf-plan.outputs.exitcode }}" >> $GITHUB_STATE
+    - name: Set output
+      run: echo "${{ steps.tf-plan.outputs.exitcode }}" >> $GITHUB_OUTPUT
+
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
