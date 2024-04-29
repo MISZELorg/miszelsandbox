@@ -53,6 +53,7 @@ jobs:
       id: step_one
       uses: azure/CLI@v2
       with:
+        azcliversion: latest
         inlineScript: |
           echo sandboxsub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
           echo spnreader=$(az keyvault secret show --vault-name kv-miszelgithub --name spnreader --query value --out tsv) >> $GITHUB_ENV
