@@ -160,7 +160,7 @@ jobs:
       with:
         client-id: ${{ secrets.AZ_CLIENT_ID }}
         subscription-id: ${{ secrets.AZ_SUBID }}
-        tenant-id : ${{ secrets.AZ_TENANT_ID }}"}'
+        tenant-id : ${{ secrets.AZ_TENANT_ID }}
 
     - name: Azure Key Vault Secrets
       id: azurekeyvault
