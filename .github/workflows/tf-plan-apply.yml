@@ -51,7 +51,7 @@ jobs:
 
     - name: Azure CLI script
       id: step_one
-      uses: azure/CLI@v1
+      uses: azure/CLI@v2
       with:
         inlineScript: |
           echo sandboxsub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
