@@ -15,16 +15,16 @@ permissions:
   contents: read
   issues: write
 
-#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
-env:
-  ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
-  ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-  ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+#These environment variables are used by the terraform azure provider to setup OIDC authenticate. 
+# env:
+#   ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+#   ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+#   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
 
 jobs:
   terraform-plan:
     name: 'Terraform Plan'
-    runs-on: azure2
+    runs-on: azure2 ### change to ubuntu-latest for MS hosted
     env:
       #this is needed since we are running terraform with read-only permissions
       ARM_SKIP_PROVIDER_REGISTRATION: true
@@ -35,8 +35,25 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
+    
+    # Sign-in to Azure with Github secrets
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    # # Install the latest version of the Terraform CLI
+    # Access environemnt secrets stored in Keyvault ### Provide valid environment secrets
+    - name: Read secrets
+      uses: azure/CLI@v2
+      with:
+        azcliversion: latest
+        inlineScript: |
+          echo sub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
+          echo spn=$(az keyvault secret show --vault-name kv-miszelgithub --name spnreader --query value --out tsv) >> $GITHUB_ENV
+
+    # # Install the latest version of the Terraform CLI ### this step is needed only with short lived runners
     # - name: Setup Terraform
     #   uses: hashicorp/setup-terraform@v3
     #   with:
@@ -45,11 +62,19 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform init
+      env:
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: "${{ env.sub }}"
+        ARM_CLIENT_ID: "${{ env.spn }}"
 
     # Generates an execution plan for Terraform
     # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
     - name: Terraform Plan
       id: tf-plan
+      env:
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: "${{ env.sub }}"
+        ARM_CLIENT_ID: "${{ env.spn }}"
       run: |
         export exitcode=0
         terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
