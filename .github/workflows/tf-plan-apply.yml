@@ -14,16 +14,10 @@ permissions:
   contents: read
   pull-requests: write
 
-#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
-env:
-#   ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
-#   ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-#   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
-
 jobs:
   terraform-plan:
     name: 'Terraform Plan'
-    runs-on: azure2
+    runs-on: azure2 ### cange to ubuntu-latest for MS hosted
     env:
       #this is needed since we are running terraform with read-only permissions
       ARM_SKIP_PROVIDER_REGISTRATION: true
@@ -43,16 +37,16 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    # Access environemnt secrets stored in Keyvault
+    # Access environemnt secrets stored in Keyvault ### Provide valid environment secrets
     - name: Read secrets
       uses: azure/CLI@v2
       with:
         azcliversion: latest
         inlineScript: |
-          echo sandboxsub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
-          echo spnreader=$(az keyvault secret show --vault-name kv-miszelgithub --name spnreader --query value --out tsv) >> $GITHUB_ENV
+          echo sub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
+          echo spn=$(az keyvault secret show --vault-name kv-miszelgithub --name spnreader --query value --out tsv) >> $GITHUB_ENV
 
-    # # Install the latest version of the Terraform CLI  ### this step is needed only with short lived runners ### this step is needed only with short lived runners
+    # # Install the latest version of the Terraform CLI ### this step is needed only with short lived runners
     # - name: Setup Terraform
     #   uses: hashicorp/setup-terraform@v3
     #   with:
@@ -62,9 +56,9 @@ jobs:
     - name: Terraform Init
       run: terraform init
       env:
-        ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: "${{ env.sandboxsub }}"
-        ARM_CLIENT_ID: "${{ env.spnreader }}"
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: "${{ env.sub }}"
+        ARM_CLIENT_ID: "${{ env.spn }}"
 
     # Checks that all Terraform configuration files adhere to a canonical format
     # Will fail the build if not
@@ -76,9 +70,9 @@ jobs:
     - name: Terraform Plan
       id: tf-plan
       env:
-        ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: "${{ env.sandboxsub }}"
-        ARM_CLIENT_ID: "${{ env.spnreader }}"
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: "${{ env.sub }}"
+        ARM_CLIENT_ID: "${{ env.spn }}"
       run: |
         export exitcode=0
         terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
@@ -160,16 +154,16 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    # Access environemnt secrets stored in Keyvault
+    # Access environemnt secrets stored in Keyvault ### Provide valid environment secrets
     - name: Read secrets
       uses: azure/CLI@v2
       with:
         azcliversion: latest
         inlineScript: |
-          echo sandboxsub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
-          echo spnadmin=$(az keyvault secret show --vault-name kv-miszelgithub --name spnadmin --query value --out tsv) >> $GITHUB_ENV
+          echo sub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
+          echo spn=$(az keyvault secret show --vault-name kv-miszelgithub --name spnadmin --query value --out tsv) >> $GITHUB_ENV
 
-    # # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token ### this step is needed only with short lived runners
+    # # Install the latest version of Terraform CLI ### This step is needed only with short lived runners
     # - name: Setup Terraform
     #   uses: hashicorp/setup-terraform@v3
 
@@ -177,9 +171,9 @@ jobs:
     - name: Terraform Init
       run: terraform init
       env:
-        ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: "${{ env.sandboxsub }}"
-        ARM_CLIENT_ID: "${{ env.spnadmin }}"
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: "${{ env.sub }}"
+        ARM_CLIENT_ID: "${{ env.spn }}"
 
     # Download saved plan from artifacts  
     - name: Download Terraform Plan
@@ -191,6 +185,6 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
       env:
-        ARM_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: "${{ env.sandboxsub }}"
-        ARM_CLIENT_ID: "${{ env.spnadmin }}"
+        ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        ARM_SUBSCRIPTION_ID: "${{ env.sub }}"
+        ARM_CLIENT_ID: "${{ env.spn }}"
