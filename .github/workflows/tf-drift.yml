@@ -17,8 +17,8 @@ permissions:
 
 #These environment variables are used by the terraform azure provider to setup OIDC authenticate. 
 # env:
-#   ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
-#   ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+#   ARM_CLIENT_ID: "${{ secrets.KV_AZURE_CLIENT_ID }}"
+#   ARM_SUBSCRIPTION_ID: "${{ secrets.KV_AZURE_SUBSCRIPTION_ID }}"
 #   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
 
 jobs:
@@ -40,9 +40,9 @@ jobs:
     - name: Azure login
       uses: azure/login@v2
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        client-id: ${{ secrets.KV_AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        subscription-id: ${{ secrets.KV_AZURE_SUBSCRIPTION_ID }}
 
     # Access environemnt secrets stored in Keyvault ### Provide valid environment secrets
     - name: Read secrets
