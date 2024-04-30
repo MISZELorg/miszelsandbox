@@ -163,7 +163,6 @@ jobs:
         inlineScript: |
           echo sub=$(az keyvault secret show --vault-name kv-miszelgithub --name sandboxsub --query value --out tsv) >> $GITHUB_ENV
           echo spn=$(az keyvault secret show --vault-name kv-miszelgithub --name spnadmin --query value --out tsv) >> $GITHUB_ENV
-          echo "::add-mask::$spn"  # Mask the 'spn' value
 
     # # Install the latest version of Terraform CLI ### This step is needed only with short lived runners
     # - name: Setup Terraform
@@ -171,7 +170,9 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init
+      run: |
+        echo "::add-mask::$spn" # Masking the spn value
+        terraform init
       env:
         ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: "${{ env.sub }}"
