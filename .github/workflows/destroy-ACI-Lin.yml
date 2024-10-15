@@ -1,4 +1,4 @@
-name: 'Deploy ACI from ACR'
+name: 'Destroy ACI'
 on:
   workflow_run:
     workflows: ["Terraform Plan/Apply"]
