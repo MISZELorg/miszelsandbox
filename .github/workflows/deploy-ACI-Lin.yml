@@ -1,0 +1,52 @@
+name: 'Deploy ACI'
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+env:
+  RUNNER_VERSION: 2.320.0
+  ACI_RESOURCE_GROUP: 'runners-rg'
+  GH_OWNER: 'MISZELorg'
+  VNET_NAME: 'runners-vnet'
+  SUBNET_NAME: 'default2'
+
+jobs:
+  deploy-aci:
+    runs-on: ubuntu-latest
+    outputs:
+      aci_name: ${{ steps.set-name.outputs.aci_name }}
+    steps:
+      # checkout the repo
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'Generate ACI name'
+        id: set-name
+        run: |
+          ACI_NAME="gh-runner-linux-${{ github.run_id }}"
+          echo "ACI_NAME=${ACI_NAME}" >> $GITHUB_ENV
+          echo "aci_name=${ACI_NAME}" >> $GITHUB_OUTPUT
+          echo "Generated ACI Name: ${ACI_NAME}"
+
+      - name: 'Create Azure Container Instance'
+        run: |
+          az container create \
+            --resource-group "${{ env.ACI_RESOURCE_GROUP }}" \
+            --name "${{ env.ACI_NAME }}" \
+            --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/github-runner-lin:${{ env.RUNNER_VERSION }} \
+            --registry-login-server "${{ secrets.REGISTRY_LOGIN_SERVER }}" \
+            --registry-username "${{ secrets.REGISTRY_USERNAME }}" \
+            --registry-password "${{ secrets.REGISTRY_PASSWORD }}" \
+            --environment-variables GH_TOKEN="${{ secrets.PAT_TOKEN }}" GH_OWNER="${{ env.GH_OWNER }}" \
+            --vnet "${{ env.VNET_NAME }}" \
+            --subnet "${{ env.SUBNET_NAME }}"
