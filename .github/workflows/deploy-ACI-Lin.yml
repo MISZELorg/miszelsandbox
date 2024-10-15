@@ -1,4 +1,4 @@
-name: Deploy ACI from ACR
+name: 'Deploy ACI from ACR'
 
 on:
   push:
