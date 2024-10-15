@@ -11,7 +11,6 @@ on:
 env:
   RUNNER_VERSION: 2.320.0
   ACI_RESOURCE_GROUP: 'runners-rg'
-  DNS_NAME_LABEL: 'gh-lin-01'
   GH_OWNER: 'MISZELorg'
   VNET_NAME: 'runners-vnet'
   SUBNET_NAME: 'default2'

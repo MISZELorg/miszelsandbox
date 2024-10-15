@@ -2,7 +2,8 @@ name: 'Terraform Plan/Apply'
 
 on:
   workflow_run:
-    workflows: ["Deploy ACI"]  # Name of Pipe A workflow
+    workflows: 
+      - Deploy ACI
     types:
       - completed
 
