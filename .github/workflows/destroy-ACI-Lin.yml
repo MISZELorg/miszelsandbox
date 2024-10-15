@@ -18,18 +18,9 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: 'Set ACI name'
-        id: set-name
-        run: |
-          ACI_NAME="gh-runner-linux-${{ github.run_id }}"
-          echo "ACI_NAME=${ACI_NAME}" >> $GITHUB_ENV
-          echo "aci_name=${ACI_NAME}" >> $GITHUB_OUTPUT
-          echo "ACI Name: ${ACI_NAME}"
-
-      # Delete the Azure Container Instance using the output from the previous job
       - name: 'Delete Azure Container Instance'
         run: |
           az container delete \
-          --resource-group "${{ env.ACI_RESOURCE_GROUP }}" \
-          --name "${{ steps.set-name.outputs.aci_name }}" \
-          --yes
+            --resource-group "${{ env.ACI_RESOURCE_GROUP }}" \
+            --name "${{ github.event.workflow_run.outputs.aci_name }}" \  # Use ACI name from Pipe A output
+            --yes
