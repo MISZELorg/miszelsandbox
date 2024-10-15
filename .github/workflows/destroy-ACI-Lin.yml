@@ -1,0 +1,34 @@
+name: Deploy ACI from ACR
+on:
+  workflow_run:
+    workflows: ["Terraform Plan/Apply"]
+    types:
+      - completed
+env:
+  ACI_RESOURCE_GROUP: 'runners-rg'
+
+jobs:
+  destroy-aci:
+    runs-on: ubuntu-latest
+    steps:
+      # Login via Azure CLI (required to run Azure CLI commands)
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'Set ACI name'
+        id: set-name
+        run: |
+          ACI_NAME="gh-runner-linux-${{ github.run_id }}"
+          echo "ACI_NAME=${ACI_NAME}" >> $GITHUB_ENV
+          echo "aci_name=${ACI_NAME}" >> $GITHUB_OUTPUT
+          echo "ACI Name: ${ACI_NAME}"
+
+      # Delete the Azure Container Instance using the output from the previous job
+      - name: 'Delete Azure Container Instance'
+        run: |
+          az container delete \
+          --resource-group "${{ env.ACI_RESOURCE_GROUP }}" \
+          --name "${{ steps.set-name.outputs.aci_name }}" \
+          --yes
