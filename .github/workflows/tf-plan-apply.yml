@@ -16,7 +16,6 @@ jobs:
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: ghrunner ### change to ubuntu-latest for MS hosted
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     env:
       #this is needed since we are running terraform with read-only permissions
       ARM_SKIP_PROVIDER_REGISTRATION: true
