@@ -20,7 +20,10 @@ jobs:
 
       - name: 'Delete Azure Container Instance'
         run: |
+          echo "Deleting container with name: ${{ github.event.workflow_run.conclusion }}"
+          ACI_NAME=$(echo ${{ github.event.workflow_run.conclusion }} | jq -r '.jobs[0].outputs.aci_name')
+          echo "Using ACI name: $ACI_NAME"
           az container delete \
             --resource-group "${{ env.ACI_RESOURCE_GROUP }}" \
-            --name "${{ github.event.workflow_run.outputs.aci_name }}" \  # Use ACI name from Pipe A output
+            --name "$ACI_NAME" \  # Use ACI name from Pipe A output
             --yes
