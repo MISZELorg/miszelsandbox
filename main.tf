@@ -1,9 +1,11 @@
 resource "azurerm_resource_group" "example" {
-  name     = "example"
-  location = "West Europe"
-}
+  name     = "example-RG"
+  location = "North Europe"
 
-resource "azurerm_resource_group" "example2" {
-  name     = "example2"
-  location = "West Europe"
+  # Tags for the Resource Group
+  tags = {
+    Environment = "Dev"
+    Owner       = "kmiszel"
+    Source      = "terraform"
+  }
 }
