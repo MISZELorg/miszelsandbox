@@ -64,10 +64,11 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
   }
 
   network_profile {
-    network_plugin     = "azure"
-    network_policy     = "cilium"
-    network_data_plane = "cilium"
-    load_balancer_sku  = "standard"
+    network_plugin      = "azure"
+    network_plugin_mode = "overlay"
+    network_policy      = "cilium"
+    network_data_plane  = "cilium"
+    load_balancer_sku   = "standard"
   }
 
   identity {
