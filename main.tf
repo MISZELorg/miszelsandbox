@@ -72,6 +72,7 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
     node_count           = 1
     min_count            = 1
     max_count            = 1
+    max_pods             = 110
 
     upgrade_settings {
       drain_timeout_in_minutes      = 0
