@@ -52,8 +52,10 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
   resource_group_name       = azurerm_resource_group.tf-aks_rg.name
   dns_prefix                = "tf-aks-cluster-dns"
   automatic_upgrade_channel = "node-image"
-  image_cleaner_enabled     = true
   sku_tier                  = "Free"
+  depends_on = [
+    azurerm_resource_group.tf-aks_rg
+  ]
 
   default_node_pool {
     name       = "systempool"
@@ -80,6 +82,10 @@ resource "azurerm_kubernetes_cluster_node_pool" "tf-aks_agentpool" {
   node_count            = 1
   max_pods              = 110
   mode                  = "User"
+  depends_on = [
+    azurerm_resource_group.tf-aks_rg,
+    azurerm_kubernetes_cluster.tf-aks
+  ]
 }
 
 # output "client_certificate" {
