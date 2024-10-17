@@ -76,6 +76,15 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
     utc_offset  = "+00:00"
   }
 
+  maintenance_window_node_os {
+    frequency   = "Weekly"
+    duration    = "4"
+    interval    = "1"
+    day_of_week = "Sunday"
+    start_time  = "00:00"
+    start_date  = "2024-10-19"
+    utc_offset  = "+00:00"
+  }
 
   default_node_pool {
     name                        = "system"
