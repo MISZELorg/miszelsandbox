@@ -21,30 +21,30 @@ resource "azurerm_resource_group" "tf-aks_rg" {
   }
 }
 
-resource "azurerm_virtual_network" "tf-aks_vnet" {
-  name                = "tf-aks-vnet"
-  location            = azurerm_resource_group.tf-aks_rg.location
-  resource_group_name = azurerm_resource_group.tf-aks_rg.name
-  address_space       = ["10.224.0.0/12"]
-}
+# resource "azurerm_virtual_network" "tf-aks_vnet" {
+#   name                = "tf-aks-vnet"
+#   location            = azurerm_resource_group.tf-aks_rg.location
+#   resource_group_name = azurerm_resource_group.tf-aks_rg.name
+#   address_space       = ["10.224.0.0/12"]
+# }
 
-resource "azurerm_subnet" "tf-aks_subnet" {
-  name                 = "tf-aks-subnet"
-  resource_group_name  = azurerm_resource_group.tf-aks_rg.name
-  virtual_network_name = azurerm_virtual_network.tf-aks_vnet.name
-  address_prefixes     = ["10.224.0.0/16"]
-}
+# resource "azurerm_subnet" "tf-aks_subnet" {
+#   name                 = "tf-aks-subnet"
+#   resource_group_name  = azurerm_resource_group.tf-aks_rg.name
+#   virtual_network_name = azurerm_virtual_network.tf-aks_vnet.name
+#   address_prefixes     = ["10.224.0.0/16"]
+# }
 
-resource "azurerm_network_security_group" "tf-aks_nsg" {
-  name                = "tf-aks-nsg"
-  location            = azurerm_resource_group.tf-aks_rg.location
-  resource_group_name = azurerm_resource_group.tf-aks_rg.name
-}
+# resource "azurerm_network_security_group" "tf-aks_nsg" {
+#   name                = "tf-aks-nsg"
+#   location            = azurerm_resource_group.tf-aks_rg.location
+#   resource_group_name = azurerm_resource_group.tf-aks_rg.name
+# }
 
-resource "azurerm_subnet_network_security_group_association" "tf-aks_nsg_assoc" {
-  subnet_id                 = azurerm_subnet.tf-aks_subnet.id
-  network_security_group_id = azurerm_network_security_group.tf-aks_nsg.id
-}
+# resource "azurerm_subnet_network_security_group_association" "tf-aks_nsg_assoc" {
+#   subnet_id                 = azurerm_subnet.tf-aks_subnet.id
+#   network_security_group_id = azurerm_network_security_group.tf-aks_nsg.id
+# }
 
 resource "azurerm_kubernetes_cluster" "tf-aks" {
   name                         = "tf-aks-cluster"
