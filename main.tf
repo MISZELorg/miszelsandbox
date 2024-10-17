@@ -66,14 +66,14 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
   ]
 
   default_node_pool {
-    name                        = "systempool"
+    name                        = "system"
     vm_size                     = "Standard_D2s_v3"
     auto_scaling_enabled        = true
     node_count                  = 1
     min_count                   = 1
     max_count                   = 2
     max_pods                    = 110
-    temporary_name_for_rotation = "temp-systempool"
+    temporary_name_for_rotation = "systemtemp"
 
     upgrade_settings {
       drain_timeout_in_minutes      = 0
@@ -98,7 +98,7 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "tf-aks_agentpool" {
-  name                  = "agentpool"
+  name                  = "agent1"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.tf-aks.id
   vm_size               = "Standard_D2s_v3"
   auto_scaling_enabled  = true
