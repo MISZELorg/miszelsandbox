@@ -55,6 +55,12 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
   sku_tier                     = "Free"
   image_cleaner_enabled        = true
   image_cleaner_interval_hours = 168
+  tags = {
+    Environment = "Dev"
+    Owner       = "kmiszel"
+    Source      = "terraform"
+  }
+
   depends_on = [
     azurerm_resource_group.tf-aks_rg
   ]
@@ -63,6 +69,13 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
     name       = "systempool"
     node_count = 1
     vm_size    = "Standard_D2s_v3"
+
+    upgrade_settings {
+      drain_timeout_in_minutes      = 0
+      max_surge                     = "10%"
+      node_soak_duration_in_minutes = 0
+    }
+
   }
 
   network_profile {
