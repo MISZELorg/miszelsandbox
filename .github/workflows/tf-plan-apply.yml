@@ -1,11 +1,12 @@
 name: 'Terraform Plan/Apply'
 
 on:
-  workflow_run:
-    workflows: 
-      - Deploy ACI
-    types:
-      - completed
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
 
 #Special permissions required for OIDC authentication
 permissions:
@@ -16,7 +17,7 @@ permissions:
 jobs:
   terraform-plan:
     name: 'Terraform Plan'
-    runs-on: ghrunner ### change to ubuntu-latest for MS hosted
+    runs-on: ubuntu-latest ### change to ubuntu-latest for MS hosted
     env:
       #this is needed since we are running terraform with read-only permissions
       ARM_SKIP_PROVIDER_REGISTRATION: true
@@ -136,7 +137,7 @@ jobs:
   terraform-apply:
     name: 'Terraform Apply'
     if: github.ref == 'refs/heads/main' && needs.terraform-plan.outputs.tfplanExitCode == 2
-    runs-on: ghrunner
+    runs-on: ubuntu-latest
     environment: production
     needs: [terraform-plan]
     
