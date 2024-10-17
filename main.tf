@@ -47,20 +47,36 @@ resource "azurerm_resource_group" "tf-aks_rg" {
 # }
 
 resource "azurerm_kubernetes_cluster" "tf-aks" {
-  name                      = "tf-aks-cluster"
-  location                  = azurerm_resource_group.tf-aks_rg.location
-  resource_group_name       = azurerm_resource_group.tf-aks_rg.name
-  dns_prefix                = "tf-aks-cluster-dns"
-  automatic_upgrade_channel = "node-image"
-  sku_tier                  = "Free"
+  name                         = "tf-aks-cluster"
+  location                     = azurerm_resource_group.tf-aks_rg.location
+  resource_group_name          = azurerm_resource_group.tf-aks_rg.name
+  dns_prefix                   = "tf-aks-cluster-dns"
+  automatic_upgrade_channel    = "patch"
+  sku_tier                     = "Free"
+  image_cleaner_enabled        = true
+  image_cleaner_interval_hours = 168
+  tags = {
+    Environment = "Dev"
+    Owner       = "kmiszel"
+    Source      = "terraform"
+  }
+
   depends_on = [
     azurerm_resource_group.tf-aks_rg
   ]
 
   default_node_pool {
-    name       = "systempool"
-    node_count = 1
-    vm_size    = "Standard_D2s_v3"
+    name                 = "systempool"
+    node_count           = 1
+    vm_size              = "Standard_D2s_v3"
+    auto_scaling_enabled = true
+
+    upgrade_settings {
+      drain_timeout_in_minutes      = 0
+      max_surge                     = "10%"
+      node_soak_duration_in_minutes = 0
+    }
+
   }
 
   network_profile {
@@ -81,6 +97,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "tf-aks_agentpool" {
   name                  = "agentpool"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.tf-aks.id
   vm_size               = "Standard_D2s_v3"
+  auto_scaling_enabled  = true
   node_count            = 1
   max_pods              = 110
   mode                  = "User"
