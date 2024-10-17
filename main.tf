@@ -69,7 +69,7 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
   maintenance_window_auto_upgrade {
     frequency   = "Weekly"
     duration    = "4"
-    interval    = "week"
+    interval    = "7"
     day_of_week = "Sunday"
     start_time  = "00:00"
     start_date  = "2024-10-18"
