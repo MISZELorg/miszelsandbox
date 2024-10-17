@@ -47,9 +47,10 @@ resource "azurerm_resource_group" "tf-aks_rg" {
 # }
 
 resource "azurerm_kubernetes_cluster" "tf-aks" {
-  name                         = "tf-aks-cluster"
-  location                     = azurerm_resource_group.tf-aks_rg.location
-  resource_group_name          = azurerm_resource_group.tf-aks_rg.name
+  name                = "tf-aks-cluster"
+  location            = azurerm_resource_group.tf-aks_rg.location
+  resource_group_name = azurerm_resource_group.tf-aks_rg.name
+  #   node_resource_group = nazwa docelowej RG
   dns_prefix                   = "tf-aks-cluster-dns"
   automatic_upgrade_channel    = "patch"
   sku_tier                     = "Free"
@@ -64,6 +65,17 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
   depends_on = [
     azurerm_resource_group.tf-aks_rg
   ]
+
+  maintenance_window_auto_upgrade {
+    frequency   = "Weekly"
+    duration    = "4"
+    interval    = "week"
+    day_of_week = "Sunday"
+    start_time  = "00:00"
+    start_date  = "2024-10-18"
+    utc_offset  = "+00:00"
+  }
+
 
   default_node_pool {
     name                        = "system"
