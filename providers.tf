@@ -21,3 +21,7 @@ provider "azurerm" {
   features {}
   use_oidc = true
 }
+
+provider "azuread" {
+  tenant_id = var.tenant_id
+}
