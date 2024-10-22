@@ -18,11 +18,11 @@ resource "azurerm_role_assignment" "aks-acr_assign" {
   ]
 }
 
-resource "azurerm_role_assignment" "aks_grafanaviewer" {
-  scope              = azurerm_dashboard_grafana.aks_grafana.id
-  role_definition_id = "/subscriptions/${data.azurerm_client_config.aks_subscription.subscription_id}/providers/Microsoft.Authorization/roleDefinitions/60921a7e-fef1-4a43-9b16-a26c52ad4769"
-  principal_id       = data.azuread_group.k8s_admins.object_id
-  depends_on = [
-    azurerm_dashboard_grafana.aks_grafana
-  ]
-}
+# resource "azurerm_role_assignment" "aks_grafanaviewer" {
+#   scope              = azurerm_dashboard_grafana.aks_grafana.id
+#   role_definition_id = "/subscriptions/${data.azurerm_client_config.aks_subscription.subscription_id}/providers/Microsoft.Authorization/roleDefinitions/60921a7e-fef1-4a43-9b16-a26c52ad4769"
+#   principal_id       = data.azuread_group.k8s_admins.object_id
+#   depends_on = [
+#     azurerm_dashboard_grafana.aks_grafana
+#   ]
+# }
