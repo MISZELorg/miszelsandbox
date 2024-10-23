@@ -22,9 +22,7 @@ provider "azurerm" {
   features {}
   # use_oidc = true
 
-  resource_provider_registrations = {
-    enabled = true
-  }
+  resource_provider_registrations = true
 }
 
 provider "azuread" {
