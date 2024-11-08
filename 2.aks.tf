@@ -62,11 +62,11 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 
   default_node_pool {
-    name                        = var.default_node_pool.name
-    vm_size                     = var.default_node_pool.vm_size
-    vnet_subnet_id              = azurerm_subnet.aks_subnet.id
-    auto_scaling_enabled        = var.default_node_pool.auto_scaling_enabled
-    zones                       = var.default_node_pool.zones
+    name                 = var.default_node_pool.name
+    vm_size              = var.default_node_pool.vm_size
+    vnet_subnet_id       = azurerm_subnet.aks_subnet.id
+    auto_scaling_enabled = var.default_node_pool.auto_scaling_enabled
+    # zones                       = var.default_node_pool.zones
     node_count                  = var.default_node_pool.node_count
     min_count                   = var.default_node_pool.min_count
     max_count                   = var.default_node_pool.max_count
