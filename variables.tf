@@ -46,20 +46,20 @@ variable "default_node_pool" {
   })
 }
 
-variable "node_pool_config" {
-  description = "Node pool configuration for AKS"
-  type = map(object({
-    name                 = string
-    vm_size              = string
-    auto_scaling_enabled = bool
-    zones                = list(string)
-    node_count           = number
-    min_count            = number
-    max_count            = number
-    max_pods             = number
-    mode                 = string
-  }))
-}
+# variable "node_pool_config" {
+#   description = "Node pool configuration for AKS"
+#   type = map(object({
+#     name                 = string
+#     vm_size              = string
+#     auto_scaling_enabled = bool
+#     zones                = list(string)
+#     node_count           = number
+#     min_count            = number
+#     max_count            = number
+#     max_pods             = number
+#     mode                 = string
+#   }))
+# }
 
 # variable "grafana_name" {
 #   description = "Name of the Grafana instance"
