@@ -1,11 +1,11 @@
-resource "azurerm_resource_group" "aks-acr_rg" {
-  name     = "${var.cluster_name}-${var.location}-acr-rg"
-  location = var.location
-  tags     = var.aks_tags
-  depends_on = [
-    azurerm_kubernetes_cluster.aks_cluster
-  ]
-}
+# resource "azurerm_resource_group" "aks-acr_rg" {
+#   name     = "${var.cluster_name}-${var.location}-acr-rg"
+#   location = var.location
+#   tags     = var.aks_tags
+#   depends_on = [
+#     azurerm_kubernetes_cluster.aks_cluster
+#   ]
+# }
 
 # resource "azurerm_container_registry" "aks-acr_acr" {
 #   name                = "${var.cluster_name}${var.location}acr"
