@@ -22,10 +22,10 @@ maintenance_window = {
 }
 
 default_node_pool = {
-  name                 = "agent"
-  vm_size              = "Standard_D2s_v3"
-  auto_scaling_enabled = false
-  #   zones                         = ["1", "2", "3"]
+  name                          = "agent"
+  vm_size                       = "Standard_D2s_v3"
+  auto_scaling_enabled          = false
+  zones                         = ["1", "2", "3"]
   node_count                    = 1
   min_count                     = null
   max_count                     = null
