@@ -92,12 +92,12 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     type = "SystemAssigned"
   }
 
-  azure_active_directory_role_based_access_control {
-    azure_rbac_enabled = false
-    admin_group_object_ids = [
-      data.azuread_group.k8s_admins.object_id
-    ]
-  }
+  # azure_active_directory_role_based_access_control {
+  #   azure_rbac_enabled = false
+  #   admin_group_object_ids = [
+  #     data.azuread_group.k8s_admins.object_id
+  #   ]
+  # }
 
   lifecycle {
     ignore_changes = [
